@@ -26,6 +26,12 @@ const playAnimation = (id) => {
     targets: `#${id} .card-top`,
     marginLeft: [800, 0],
     ...defaultOptions,
+    begin: () => {
+      disableClick();
+    },
+    complete: () => {
+      enableClick();
+    },
   });
   const animateMiddle = anime({
     targets: `#${id} .card-middle`,
@@ -66,15 +72,15 @@ const animation3 = playAnimation("card-3");
 let activeAnimation = 0;
 const animationList = [animation1, animation2, animation3];
 
-card1.addEventListener("click", () => {
-  runAnimation(0);
-});
-card2.addEventListener("click", () => {
-  runAnimation(1);
-});
-card3.addEventListener("click", () => {
-  runAnimation(2);
-});
+function run(number) {
+  return (event) => {
+    runAnimation(number);
+  };
+}
+
+card1.onclick = run(0);
+card2.onclick = run(1);
+card3.onclick = run(2);
 
 function runAnimation(number) {
   if (activeAnimation !== number) {
@@ -92,6 +98,19 @@ function runAnimation(number) {
 
   activeAnimation = number;
 }
+
 animation1.forEach((item) => {
   item.play();
 });
+
+function disableClick() {
+  cardList.forEach((card) => {
+    card.onclick = null;
+  });
+}
+
+function enableClick() {
+  cardList.forEach((card, index) => {
+    card.onclick = run(index);
+  });
+}
